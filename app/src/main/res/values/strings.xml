@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Recipe</string>
+    <string name="recipeName">No name</string>
+    <string name="recipeSaveText">Save</string>
+    <string name="recipeExit">Exit</string>
+    <string name="inflateRecipeName">No name</string>
+    <string name="categoryCheck">Category</string>
+    <string name="typeCheck">Type</string>
+    <string name="ingredientsHint">Ingredients...</string>
+    <string name="typeHint">Type</string>
+    <string name="searchButton">Search</string>
+    <string name="imageSelectionText">Select an image</string>
+    <string name="imageSelectButton">Select From Phone</string>
+    <string name="recipeNameHint">Recipe Name</string>
+    <string name="addButton">Add</string>
+    <string name="categoryHint">Category</string>
+    <string name="typeCatHint">Type or Category</string>
+    <string name="ingredientsTitle">Add ingredients</string>
+    <string name="ingredientHint">Ingredient</string>
+    <string name="addIngredientButton">Add Ingredient</string>
+    <string name="addInstructionsTitle">Add instructions</string>
+    <string name="addInstructionHint">Instruction</string>
+    <string name="addInstructionButton">Add Instruction</string>
+    <string name="saveButton">Save Recipe</string>
+    <string name="editButton">Edit</string>
+    <string name="ingredientsListTitle">Ingredients</string>
+    <string name="instructionsListTitle">Instructions</string>
+    <string name="categoryTitle">Category</string>
+    <string name="typeTitle">Type</string>
+    <string name="deleteButton">Delete</string>
+    <string name="appName">Cook Helper</string>
+    <string name="searchPageName">Search Results</string>
+    <string name="editPageName">Edit Recipe</string>
+    <string name="changeImagePageName">Change Image</string>
+    <string name="recipeInfoPageName">Recipe Information</string>
+</resources>
