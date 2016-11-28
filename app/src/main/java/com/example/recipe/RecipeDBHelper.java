@@ -2,12 +2,15 @@ package com.example.recipe;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RecipeDBHelper extends SQLiteOpenHelper {
     public RecipeDBHelper(Context context, String string, SQLiteDatabase.CursorFactory cf, int i){
@@ -27,7 +30,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
                 "(ingredientname varchar(20)," +
                 "recipeid integer," +
                 "PRIMARY KEY(ingredientName, recipeid),"+
-                "FOREIGN KEY(recipeid) REFERENCES recipes(recipeid);");
+                "FOREIGN KEY(recipeid) REFERENCES recipes(recipeid) ON DELETE CASCADE;");
     }
 
     @Override
@@ -59,6 +62,10 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         return this.getWritableDatabase().insert("recipesDB", null, cv);
     }
 
+    public void updateRecipe(RecipeContainer rc){
+        this.updateRecipe(rc.getRecipeid(), rc.getName(), rc.getType(), rc.getCategory(), rc.getInstructions(), rc.getInstructions());
+    }
+
     public void updateRecipe(long id, String name, String type, String category, String[] instructions, String[] ingredients){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -79,8 +86,77 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void getRecipe(long id){
-        SQLiteDatabase db = this.getWritableDatabase();
+    static private long[] getIds(Cursor results, String column){
+        long[] ids = new long[results.getCount()];
+        int idx = 0;
+        if (results == null | results.getCount() == 0){return ids;}
+        while(!results.isAfterLast()){
+            ids[idx] = results.getLong(results.getColumnIndex(column));
+            idx++;
+            results.moveToNext();
+        }
+        results.close();
+        return ids;
+    }
 
+    public long[] searchIngredient(String ingredient){
+        SQLiteDatabase db = this.getReadableDatabase();
+        long[] ids;
+        String[] columns = {"ingredients.recipeid"};
+
+        Cursor results = db.query(true, "recipeDB", columns, "ingredients.ingredientName = " + ingredient, null, null, null, null, null);
+        results.moveToFirst();
+        return getIds(results, columns[0]);
+    }
+
+    public long[] searchCategory(String category){
+        SQLiteDatabase db = this.getReadableDatabase();
+        long[] ids;
+        String[] columns = {"recipes.recipeid"};
+
+        Cursor results = db.query(true, "recipeDB", columns, "recipes.categoryName = " + category, null, null, null, null, null);
+        results.moveToFirst();
+
+        return getIds(results, columns[0]);
+    }
+
+    public long[] searchType(String type){
+        SQLiteDatabase db = this.getReadableDatabase();
+        long[] ids;
+        String[] columns = {"recipes.recipeid"};
+
+        Cursor results = db.query(true, "recipeDB", columns, "recipes.typeName = " + type, null, null, null, null, null);
+        results.moveToFirst();
+
+        return getIds(results, columns[0]);
+    }
+
+    public RecipeContainer getRecipe(long id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        RecipeContainer recipe;
+        JSONArray jsoninstructions;
+
+        Cursor results = db.query(true, "recipeDB", new String[] {"recipes.recipeName",
+        "recipes.recipeType", "recipes.recipeCategory", "recipes.instructions"}, "recipes.recipeid = "+id, null, null, null, null, null);
+
+        results.moveToFirst();
+        recipe = new RecipeContainer(id, results.getString(0), results.getString(1), results.getString(2));
+        try{jsoninstructions = new JSONArray(results.getString(3));}
+        catch (Exception e) {jsoninstructions = new JSONArray();};
+
+
+        for(int i = 0; i < jsoninstructions.length(); i++){
+            try{ recipe.addInstruction(jsoninstructions.getJSONObject(i).getString("name"));}
+            catch (Exception e){recipe.addInstruction("");}
+        }
+
+        return recipe;
+
+    }
+
+    public void deleteRecipe(long id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        db.delete("recipesDB", "recipes.recipeid = " + id, null);
     }
 }
