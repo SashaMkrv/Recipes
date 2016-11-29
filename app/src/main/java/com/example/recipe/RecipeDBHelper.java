@@ -196,6 +196,10 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         Cursor results = db.query(true, RECIPE_TABLE_NAME, new String[] {"recipeName",
         "recipeType", "recipeCategory", "recipeInstructions"}, "recipeid = "+id, null, null, null, null, null);
 
+        if (results.getCount() < 1){
+            return null;
+        }
+
         results.moveToFirst();
         recipe = new RecipeContainer(id, results.getString(0), results.getString(1), results.getString(2));
 

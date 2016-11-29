@@ -14,6 +14,9 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SearchResults extends AppCompatActivity{
     private ListView list;
     @Override
@@ -31,12 +34,17 @@ public class SearchResults extends AppCompatActivity{
         }
 
         //long[] resultIDs = db.searchIngredient("Apples"); //an example list of items
-        RecipeContainer[] resultList = new RecipeContainer[resultIDs.length];
+        RecipeContainer[] resultList;
+        ArrayList<RecipeContainer> rList = new ArrayList<RecipeContainer>();
         int idx = 0;
         for(long id: resultIDs){
-            resultList[idx] = db.getRecipe(id);
-            idx++;
+            RecipeContainer tmp = db.getRecipe(id);
+            if (!(tmp == null)){
+                rList.add(tmp);
+            }
         }
+
+        resultList = rList.toArray(new RecipeContainer[rList.size()]);
 
         for(RecipeContainer r:resultList){
             try{Log.i("recipe name", r.getName());}
