@@ -39,11 +39,11 @@ public class RecipeInfoActivity extends AppCompatActivity {
 
         //set all those ingredients
         LinearLayout ingLayout = (LinearLayout) findViewById(R.id.ingredientList);
-        ListHelper.addStringsToLinearLayout(egIng, ingLayout, inflate);
+        ListHelper.addStringsToLinearLayout(egIng, ingLayout, inflate, false);
 
         //set all those instructions
         LinearLayout instLayout = (LinearLayout) findViewById(R.id.instructionList);
-        ListHelper.addStringsToLinearLayout(egInst, instLayout, inflate);
+        ListHelper.addStringsToLinearLayout(egInst, instLayout, inflate, false);
 
         //set some names
         TextView name = (TextView) findViewById(R.id.recipeName);

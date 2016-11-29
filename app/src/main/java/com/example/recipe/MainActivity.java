@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
         addButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), EditRecipeActivity.class);
+                RecipeDBHelper db = new RecipeDBHelper(view.getContext());
+                String name = ((EditText)findViewById(R.id.recipeName)).getText().toString();
+                long id = db.newRecipe(name);
+                intent.putExtra("id", id);
                 startActivity(intent);
             }
         });

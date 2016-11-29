@@ -132,7 +132,8 @@
                     <Button
                         android:id="@+id/button"
 
-                        style="@style/AddButton" />
+                        style="@style/AddButton"
+                        android:onClick="onAddIngredientButtonClick" />
 
                 </LinearLayout>
 
@@ -188,7 +189,8 @@
                         android:layout_height="60dp"
                         android:id="@+id/addInstructionButton"
                         android:background="@drawable/add"
-                        android:layout_weight="0.58" />
+                        android:layout_weight="0.58"
+                        android:onClick="onAddInstructionButtonClick" />
 
 
 
@@ -220,7 +222,8 @@
                     android:freezesText="true"
                     android:gravity="center"
                     android:hapticFeedbackEnabled="false"
-                    android:text="@string/saveButton" />
+                    android:text="@string/saveButton"
+                    android:onClick="onSaveButtonClick" />
             </LinearLayout>
 
         </LinearLayout>

@@ -89,6 +89,11 @@ public class RecipeContainer
         return wasRemoved;
     }
 
+    public boolean clearIngredients(){
+        ingredients.clear();
+        return true;
+    }
+
     public boolean addInstruction(String aInstruction)
     {
         boolean wasAdded = false;
@@ -101,6 +106,11 @@ public class RecipeContainer
         boolean wasRemoved = false;
         wasRemoved = instructions.remove(aInstruction);
         return wasRemoved;
+    }
+
+    public boolean clearInstructions(){
+        instructions.clear();
+        return true;
     }
 
     public long getRecipeid()

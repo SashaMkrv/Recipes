@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class SearchResults extends AppCompatActivity{
-
+    private ListView list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +57,7 @@ public class SearchResults extends AppCompatActivity{
             }
         });
         registerForContextMenu(results);
+        list = results;
     }
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -64,4 +66,23 @@ public class SearchResults extends AppCompatActivity{
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_context_menu, menu);
     }
+
+    public boolean onContextItemSelected(MenuItem menu){
+        int idx = ((AdapterView.AdapterContextMenuInfo)menu.getMenuInfo()).position;
+        RecipeContainer recipe = ((RecipeArrayAdapter)list.getAdapter()).getItem(idx);
+        long id = recipe.getRecipeid();
+        RecipeDBHelper db = new RecipeDBHelper(this);
+        Log.i("name", recipe.getName());
+        if(menu.getTitle().toString().equals("Delete")){
+            Log.i("delete", "item "+id);
+            db.deleteRecipe(id);
+        }
+        else{
+            Intent intent = new Intent(this,EditRecipeActivity.class);
+            intent.putExtra("id", id);
+            startActivity(intent);
+        }
+        return true;
+    }
+
 }
