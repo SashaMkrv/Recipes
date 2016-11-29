@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:isScrollContainer="true">
@@ -97,7 +96,7 @@
                 <TextView
                     android:text="@string/ingredientsTitle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:textSize="15dp"
                     android:gravity="center_horizontal"
@@ -110,22 +109,31 @@
                     android:layout_weight="1"
                     android:id="@+id/ingredientList"></LinearLayout>
 
-                <EditText
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:id="@+id/addIngredienText"
-                    android:hint="@string/ingredientHint"
-                    android:layout_weight="1" />
+                    android:layout_weight="1">
 
-                <Button
-                    android:backgroundTint="@color/colorAccent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addIngredient"
-                    android:layout_weight="1"
-                    android:text="@string/addIngredientButton" />
+                    <EditText
+                        android:layout_width="317dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/addIngredientText"
+                        android:hint="@string/ingredientHint"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:backgroundTint="?attr/actionModeSplitBackground"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button"
+
+                        android:background="@android:drawable/ic_input_add" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <android.support.v4.widget.Space
@@ -152,21 +160,31 @@
                     android:layout_weight="1"
                     android:id="@+id/instructionList"></LinearLayout>
 
-                <EditText
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:id="@+id/addInstructionText"
-                    android:hint="@string/addInstructionHint" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
 
-                <Button
-                    android:backgroundTint="@color/colorAccent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addInstructionButton"
-                    android:layout_weight="1"
-                    android:text="@string/addInstructionButton" />
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/addInstructionText"
+                        android:hint="@string/addInstructionHint"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/addInstructionButton"
+                        android:background="@android:drawable/ic_input_add" />
+
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -174,13 +192,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp" />
 
-            <Button
-                android:backgroundTint="@color/colorAccent"
-                android:text="@string/saveButton"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/saveButton"
-                android:layout_weight="0.75" />
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+                <Space
+                    android:layout_width="126dp"
+                    android:layout_height="match_parent" />
+
+                <Button
+                    android:backgroundTint="@android:color/background_dark"
+                    android:id="@+id/saveButton"
+                    android:background="@android:drawable/ic_menu_save"
+                    android:layout_width="98dp"
+                    android:layout_height="110dp"
+
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:hapticFeedbackEnabled="false"
+                    android:layout_weight="0.10" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

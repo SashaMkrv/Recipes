@@ -31,7 +31,19 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
                 "recipeid integer," +
                 "PRIMARY KEY(ingredientName, recipeid),"+
                 "FOREIGN KEY(recipeid) REFERENCES recipes(recipeid) ON DELETE CASCADE;");
-    }
+
+        long id = this.newRecipe("Apple Pie");
+        this.updateRecipe(id, "Apple Pie", "Desert", "North American", new String[] {"flour", "butter", "eggs", "apples", "sugar"},
+                new String[] {"Make pie dough.", "Refrigerate dough.", "Roll dough into mold.", "Put in apples.", "Bake at 450 f for 20 minutes.", "Let cool"});
+
+        id = this.newRecipe("Apple salad");
+        this.updateRecipe(id, "Apple Salad", "Side", "Who Knows", new String[] {"apples", "mayonnaise", "carrots", "cabbage", "raisins"},
+                new String[] {"Mix in all 'dry' ingredients.", "Mix in mayonnaise.", "Serve."});
+
+        id = this.newRecipe("Apple Oatmeal");
+        this.updateRecipe(id, "Apple Oatmeal", "Breakfast", "Who Knows", new String[] {"oatmeal", "sugar", "milk", "apples", "cinnamon"},
+                new String[] {"Bring milk to a boil", "Put oatmeal in the milk", "Stir in sugar, apples, and cinnammon", "Simmer for 5 minutes"});
+        }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

@@ -11,23 +11,28 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:weightSum="1">
 
-            <ImageView
+            <Space
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/avatar_orange"
-                android:id="@+id/recipeImage"
-                android:layout_width="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="0.50" />
 
             <TextView
                 android:text="@string/recipeName"
-                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/recipeName"
-                android:layout_weight="0.5"
                 android:textSize="17dp"
-                android:gravity="center_vertical" />
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:layout_width="200dp" />
+
+            <ImageView
+                android:layout_height="140dp"
+                android:id="@+id/recipeImage"
+                app:srcCompat="@drawable/avatar_orange"
+                android:layout_width="120dp" />
 
         </LinearLayout>
 
