@@ -4,12 +4,13 @@
     android:layout_height="wrap_content">
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/ingredientSearch"
         android:inputType="text"
-        android:hint="@string/ingredientsHint" />
+        android:hint="@string/ingredientsHint"
+        android:layout_gravity="center_horizontal"/>
 
     <RadioGroup
         android:layout_width="match_parent"
@@ -34,21 +35,23 @@
     </RadioGroup>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="241dp"
         android:layout_height="wrap_content"
         android:inputType="text"
         android:ems="10"
         android:id="@+id/typeSearch"
-        android:hint="@string/typeCatHint" />
+        android:hint="@string/typeCatHint"
+        android:layout_gravity="center_horizontal"/>
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="15dp" />
+        android:layout_height="41dp" />
 
     <Button
+        android:layout_gravity="center_horizontal"
         android:background="@color/colorAccent"
         android:text="@string/searchButton"
-        android:layout_width="match_parent"
+        android:layout_width="141dp"
         android:layout_height="wrap_content"
         android:id="@+id/searchButton" />
 </LinearLayout>

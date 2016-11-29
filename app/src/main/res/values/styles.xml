@@ -14,7 +14,14 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">false</item> -->
         <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 
+    <style name="AddButton">
+        <!--<item name="android:backgroundTint">?attr/actionModeSplitBackground</item>-->
+        <item name="android:background">@drawable/add</item>
+        <item name="android:layout_weight">7.05</item>
+        <item name="android:layout_width">25dp</item>
+        <item name="android:layout_height">60dp</item>
     </style>
 
 </resources>
