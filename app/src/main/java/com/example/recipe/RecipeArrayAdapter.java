@@ -9,13 +9,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class RecipeArrayAdapter extends ArrayAdapter<String> {
+public class RecipeArrayAdapter extends ArrayAdapter<RecipeContainer> {
     private final Context context;
     private final String[] values;
-    public RecipeArrayAdapter(Context context, String[] values) {
+    public final long[] ids;
+    public RecipeArrayAdapter(Context context, RecipeContainer[] values) {
         super(context, R.layout.recipe_inflate, values);
+        String[] names = new String[values.length];
+        int idx = 0;
+        for (RecipeContainer r: values){
+            names[idx] = r.getName();
+            idx++;
+        }
+        long[] ids = new long[values.length];
+        idx = 0;
+        for (RecipeContainer r: values){
+            ids[idx] = r.getRecipeid();
+            idx++;
+        }
+        this.ids = ids;
         this.context = context;
-        this.values = values;
+        this.values = names;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

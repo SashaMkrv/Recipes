@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -26,8 +27,22 @@ public class EditRecipeActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTitle(R.string.editPageName);
         setContentView(R.layout.activity_edit_recipe);
-        String[] egInst = {"1. mix everything", "2. into the oven", "3. consume"};
-        String[] egIng = {"pumpkin", "flour", "tomato", "chicken stock"};
+
+        long id = getIntent().getLongExtra("id", RecipeDBHelper.egRecipeid);
+
+        RecipeDBHelper db = new RecipeDBHelper(this);
+        RecipeContainer recipe;
+        try{recipe = db.getRecipe(id);}
+        catch (Exception e){
+            recipe = new RecipeContainer(id, "No Name", "No Category", "No Type");
+        }
+        Log.i("id got from intent: ", ""+id);
+
+        String[] egInst = recipe.getInstructions();
+        String[] egIng = recipe.getIngredients();
+        String nameStr = recipe.getName();
+        String typeStr = recipe.getType();
+        String categoryStr = recipe.getCategory();
 
         LayoutInflater inflate = LayoutInflater.from(this);
 
@@ -38,6 +53,10 @@ public class EditRecipeActivity extends AppCompatActivity {
         //set all those instructions
         LinearLayout instLayout = (LinearLayout) findViewById(R.id.instructionList);
         ListHelper.addStringsToLinearLayout(egInst, instLayout, inflate);
+
+        ((EditText)findViewById(R.id.recipeName)).setText(nameStr);
+        ((EditText)findViewById(R.id.typeName)).setText(typeStr);
+        ((EditText)findViewById(R.id.categoryName)).setText(categoryStr);
 
     }
     public void onImageClick(View view){

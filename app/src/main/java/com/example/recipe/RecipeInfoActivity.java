@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class RecipeInfoActivity extends AppCompatActivity {
+    private long search_id = RecipeDBHelper.egRecipeid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +21,12 @@ public class RecipeInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_info);
         RecipeDBHelper db = new RecipeDBHelper(this);
         db.fillExamples();
-        RecipeContainer recipe = db.getRecipe(RecipeDBHelper.egRecipeid);
+
+        long id = getIntent().getLongExtra("id", RecipeDBHelper.egRecipeid);
+
+        RecipeContainer recipe = db.getRecipe(id);
+
+        search_id = recipe.getRecipeid();
 
         String[] egInst = recipe.getInstructions();
         String[] egIng = recipe.getIngredients();
@@ -50,6 +56,9 @@ public class RecipeInfoActivity extends AppCompatActivity {
 
     public void onEditClick(View view){
         Intent intent = new Intent(this, EditRecipeActivity.class);
+        Bundle dataBundle = new Bundle();
+        //dataBundle.putInt("id", (int)search_id); //this might be dangerous
+        intent.putExtra("id", search_id);
         startActivity(intent);
     }
 }

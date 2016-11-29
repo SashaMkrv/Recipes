@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchResults.class);
+                RecipeDBHelper db = new RecipeDBHelper(view.getContext());
+                db.fillExamples();
+                intent.putExtra("ids", db.searchIngredient("apples"));
                 startActivity(intent);
             }
         });
