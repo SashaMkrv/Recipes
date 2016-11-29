@@ -28,32 +28,16 @@ public class EditRecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_recipe);
         String[] egInst = {"1. mix everything", "2. into the oven", "3. consume"};
         String[] egIng = {"pumpkin", "flour", "tomato", "chicken stock"};
-        //ListView instList = (ListView) findViewById(R.id.instructionList);
-        //ListView ingList = (ListView) findViewById(R.id.ingredientList);
-        //ArrayAdapter<String> instAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, egInst);
-        //ArrayAdapter<String> ingAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, egIng);
-        //instList.setAdapter(instAdapter);
-        //ingList.setAdapter(ingAdapter);
 
         LayoutInflater inflate = LayoutInflater.from(this);
 
         //set all those ingredients
         LinearLayout ingLayout = (LinearLayout) findViewById(R.id.ingredientList);
         ListHelper.addStringsToLinearLayout(egIng, ingLayout, inflate);
-        /**for(String ing : egIng){
-            TextView view  = (TextView)inflate.inflate(android.R.layout.simple_expandable_list_item_1, ingLayout, false);
-            view.setText(ing);
-            ingLayout.addView(view);
-        }*/
 
         //set all those instructions
         LinearLayout instLayout = (LinearLayout) findViewById(R.id.instructionList);
         ListHelper.addStringsToLinearLayout(egInst, instLayout, inflate);
-        /**for(String inst : egInst){
-            TextView view  = (TextView)inflate.inflate(android.R.layout.simple_expandable_list_item_1, instLayout, false);
-            view.setText(inst);
-            instLayout.addView(view);
-        }*/
 
     }
     public void onImageClick(View view){

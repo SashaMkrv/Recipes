@@ -18,8 +18,16 @@ public class RecipeInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_recipe_info);
-        String[] egInst = {"1. mix everything", "2. into the oven", "3. consume"};
-        String[] egIng = {"pumpkin", "flour", "tomato", "chicken stock"};
+        RecipeDBHelper db = new RecipeDBHelper(this);
+        db.fillExamples();
+        RecipeContainer recipe = db.getRecipe(RecipeDBHelper.egRecipeid);
+
+        String[] egInst = recipe.getInstructions();
+        String[] egIng = recipe.getIngredients();
+
+        String nameStr = recipe.getName();
+        String typeStr = recipe.getType();
+        String categoryStr = recipe.getCategory();
 
         LayoutInflater inflate = LayoutInflater.from(this);
 
@@ -35,9 +43,9 @@ public class RecipeInfoActivity extends AppCompatActivity {
         TextView name = (TextView) findViewById(R.id.recipeName);
         TextView category = (TextView) findViewById(R.id.categoryName);
         TextView type = (TextView) findViewById(R.id.typeName);
-        name.setText("Dry Soup");
-        type.setText("brunch");
-        category.setText("underground");
+        name.setText(nameStr);
+        type.setText(typeStr);
+        category.setText(categoryStr);
     }
 
     public void onEditClick(View view){

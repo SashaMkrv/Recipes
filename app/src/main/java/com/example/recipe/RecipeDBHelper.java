@@ -3,8 +3,11 @@ package com.example.recipe;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.IntegerRes;
+import android.util.Log;
 
 import org.json.JSONArray;
 
@@ -13,24 +16,47 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RecipeDBHelper extends SQLiteOpenHelper {
-    public RecipeDBHelper(Context context, String string, SQLiteDatabase.CursorFactory cf, int i){
+    static public long egRecipeid;
+    static private boolean filled = false;
+
+    static private String RECIPE_TABLE_NAME = "recipes";
+    static private String INGREDIENTS_TABLE_NAME = "ingredients";
+    static private String INGREDIENT_COLUMN_NAME = "ingredientName";
+
+    public RecipeDBHelper(Context context){
         super(context, "recipesDB", null, 1);
     }
+    /**public RecipeDBHelper(Context context, String string, SQLiteDatabase.CursorFactory cf, int i){
+        super(context, "recipesDB", null, 1);
+    }*/
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
-                "create table recipes" +
-                "(recipeid integer primary key,"+
+                "create table " + RECIPE_TABLE_NAME +
+                " (recipeid integer primary key,"+
                 "recipeName text," +
                         "recipeType varchar(20)," +
                         "recipeCategory varchar(20)," +
-                        "recipeInstructions text);" +
-                "create table ingredients" +
-                "(ingredientname varchar(20)," +
+                        "recipeInstructions text);");
+        db.execSQL("create table " + INGREDIENTS_TABLE_NAME +
+                " (" + INGREDIENT_COLUMN_NAME + " varchar(20)," +
                 "recipeid integer," +
-                "PRIMARY KEY(ingredientName, recipeid),"+
-                "FOREIGN KEY(recipeid) REFERENCES recipes(recipeid) ON DELETE CASCADE;");
+                "PRIMARY KEY("+INGREDIENT_COLUMN_NAME+", recipeid),"+
+                "FOREIGN KEY(recipeid) REFERENCES recipes(recipeid) ON DELETE CASCADE);");
+
+        }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // TODO Auto-generated method stub
+        db.execSQL("DROP TABLE IF EXISTS "+ RECIPE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS "+ INGREDIENTS_TABLE_NAME);
+        onCreate(db);
+    }
+
+    public void fillExamples(){
+        if (filled){return;}
 
         long id = this.newRecipe("Apple Pie");
         this.updateRecipe(id, "Apple Pie", "Desert", "North American", new String[] {"flour", "butter", "eggs", "apples", "sugar"},
@@ -43,11 +69,9 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         id = this.newRecipe("Apple Oatmeal");
         this.updateRecipe(id, "Apple Oatmeal", "Breakfast", "Who Knows", new String[] {"oatmeal", "sugar", "milk", "apples", "cinnamon"},
                 new String[] {"Bring milk to a boil", "Put oatmeal in the milk", "Stir in sugar, apples, and cinnammon", "Simmer for 5 minutes"});
-        }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        egRecipeid = id;
+        filled = true;
     }
 
     /**public void createRecipe(String name, String type, String category,
@@ -71,30 +95,30 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
     public long newRecipe(String name){
         ContentValues cv = new ContentValues();
         cv.put("recipeName", name);
-        return this.getWritableDatabase().insert("recipesDB", null, cv);
+        return this.getWritableDatabase().insert("recipes", null, cv);
     }
 
     public void updateRecipe(RecipeContainer rc){
-        this.updateRecipe(rc.getRecipeid(), rc.getName(), rc.getType(), rc.getCategory(), rc.getInstructions(), rc.getInstructions());
+        this.updateRecipe(rc.getRecipeid(), rc.getName(), rc.getType(), rc.getCategory(), rc.getIngredients(), rc.getInstructions());
     }
 
-    public void updateRecipe(long id, String name, String type, String category, String[] instructions, String[] ingredients){
+    public void updateRecipe(long id, String name, String type, String category, String[] ingredients, String[] instructions){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("recipes.recipeid", id);
-        cv.put("recipes.recipeName", name);
-        cv.put("recipes.recipeType", type);
-        cv.put("recipes.recipeCategory", category);
-        cv.put("recipes.recipeInstructions",
+        cv.put("recipeid", id);
+        cv.put("recipeName", name);
+        cv.put("recipeType", type);
+        cv.put("recipeCategory", category);
+        cv.put("recipeInstructions",
                 (new JSONArray(Arrays.asList(instructions)).toString()));
-        db.replace("recipesDB", null, cv);
+        db.replace(RECIPE_TABLE_NAME, null, cv);
         //delete ingredients before writing current list
-        db.delete("recipesDB", "ingredients.recipeid = " + id, null);
+        db.delete(INGREDIENTS_TABLE_NAME, "recipeid = " + id, null);
         for(String ing: ingredients){
             cv = new ContentValues();
-            cv.put("ingredients.recipeid", id);
-            cv.put("ingredients.ingredientName", ing);
-            db.insert("recipesDB", null, cv);
+            cv.put("recipeid", id);
+            cv.put("ingredientName", ing);
+            db.insert(INGREDIENTS_TABLE_NAME, null, cv);
         }
     }
 
@@ -111,12 +135,26 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         return ids;
     }
 
+    static private String[] getStrings(Cursor results, String column){
+        String[] strings = new String[results.getCount()];
+        int idx = 0;
+        int index = results.getColumnIndex(column);
+        if (results == null | results.getCount() == 0){return strings;}
+        while(!results.isAfterLast()){
+            strings[idx] = results.getString(index);
+            idx++;
+            results.moveToNext();
+        }
+        results.close();
+        return strings;
+    }
+
     public long[] searchIngredient(String ingredient){
         SQLiteDatabase db = this.getReadableDatabase();
         long[] ids;
-        String[] columns = {"ingredients.recipeid"};
+        String[] columns = {"recipeid"};
 
-        Cursor results = db.query(true, "recipeDB", columns, "ingredients.ingredientName = " + ingredient, null, null, null, null, null);
+        Cursor results = db.query(true, INGREDIENTS_TABLE_NAME, columns, "ingredientName = " + ingredient, null, null, null, null, null);
         results.moveToFirst();
         return getIds(results, columns[0]);
     }
@@ -124,9 +162,9 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
     public long[] searchCategory(String category){
         SQLiteDatabase db = this.getReadableDatabase();
         long[] ids;
-        String[] columns = {"recipes.recipeid"};
+        String[] columns = {"recipeid"};
 
-        Cursor results = db.query(true, "recipeDB", columns, "recipes.categoryName = " + category, null, null, null, null, null);
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "categoryName = " + category, null, null, null, null, null);
         results.moveToFirst();
 
         return getIds(results, columns[0]);
@@ -135,9 +173,9 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
     public long[] searchType(String type){
         SQLiteDatabase db = this.getReadableDatabase();
         long[] ids;
-        String[] columns = {"recipes.recipeid"};
+        String[] columns = {"recipeid"};
 
-        Cursor results = db.query(true, "recipeDB", columns, "recipes.typeName = " + type, null, null, null, null, null);
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "typeName = " + type, null, null, null, null, null);
         results.moveToFirst();
 
         return getIds(results, columns[0]);
@@ -148,18 +186,30 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         RecipeContainer recipe;
         JSONArray jsoninstructions;
 
-        Cursor results = db.query(true, "recipeDB", new String[] {"recipes.recipeName",
-        "recipes.recipeType", "recipes.recipeCategory", "recipes.instructions"}, "recipes.recipeid = "+id, null, null, null, null, null);
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, new String[] {"recipeName",
+        "recipeType", "recipeCategory", "recipeInstructions"}, "recipeid = "+id, null, null, null, null, null);
 
         results.moveToFirst();
         recipe = new RecipeContainer(id, results.getString(0), results.getString(1), results.getString(2));
+        String inst = results.getString(3);
+        Log.i("instruction", inst);
         try{jsoninstructions = new JSONArray(results.getString(3));}
         catch (Exception e) {jsoninstructions = new JSONArray();};
 
 
         for(int i = 0; i < jsoninstructions.length(); i++){
-            try{ recipe.addInstruction(jsoninstructions.getJSONObject(i).getString("name"));}
+            try{ recipe.addInstruction(jsoninstructions.getString(i));}
             catch (Exception e){recipe.addInstruction("");}
+        }
+
+
+        results = db.query(true, INGREDIENTS_TABLE_NAME, new String[] {INGREDIENT_COLUMN_NAME}, "recipeid = "+id, null, null, null, null, null);
+
+        results.moveToFirst();
+        String[] ingredients = getStrings(results, INGREDIENT_COLUMN_NAME);
+
+        for(String ing:ingredients){
+            recipe.addInstruction(ing);
         }
 
         return recipe;
@@ -169,6 +219,6 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
     public void deleteRecipe(long id){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        db.delete("recipesDB", "recipes.recipeid = " + id, null);
+        db.delete("recipes", "recipeid = " + id, null);
     }
 }
