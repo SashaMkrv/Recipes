@@ -52,12 +52,18 @@ public class MainActivity extends AppCompatActivity {
         mSpec.setIndicator("Add Recipe");
         mTabHost.addTab(mSpec);
 
+        mSpec = mTabHost.newTabSpec("Info");
+        mSpec.setContent(R.id.info);
+        mSpec.setIndicator("Info");
+        mTabHost.addTab(mSpec);
+
         Button searchButton = (Button) findViewById(R.id.searchButton);
         searchButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchResults.class);
                 RecipeDBHelper db = new RecipeDBHelper(view.getContext());
                 db.fillExamples();
+                //intent.putExtra("ids", db.searchType("Breakfast"));
                 intent.putExtra("ids", db.searchIngredient("apples"));
                 startActivity(intent);
             }

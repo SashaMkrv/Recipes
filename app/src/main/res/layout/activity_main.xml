@@ -47,6 +47,20 @@
                         android:layout_gravity="center_horizontal"
                         app:srcCompat="@drawable/cook_open" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/info"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:text="@string/instructions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/instructionsText" />
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/add_Tab"
                     android:layout_width="match_parent"
@@ -67,6 +81,7 @@
                 </LinearLayout>
 
             </FrameLayout>
+
         </LinearLayout>
     </TabHost>
 </RelativeLayout>

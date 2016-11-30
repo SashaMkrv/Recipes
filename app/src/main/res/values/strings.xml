@@ -33,4 +33,5 @@
     <string name="editPageName">Edit Recipe</string>
     <string name="changeImagePageName">Change Image</string>
     <string name="recipeInfoPageName">Recipe Information</string>
+    <string name="instructions">There would be instructions of some sort here, but there are not :(</string>
 </resources>

@@ -8,20 +8,23 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class RecipeArrayAdapter extends ArrayAdapter<RecipeContainer> {
     private final Context context;
     private final String[] values;
     public final long[] ids;
-    public RecipeArrayAdapter(Context context, RecipeContainer[] values) {
+    public RecipeArrayAdapter(Context context, List<RecipeContainer> values) {
         super(context, R.layout.recipe_inflate, values);
-        String[] names = new String[values.length];
+        String[] names = new String[values.size()];
         int idx = 0;
         for (RecipeContainer r: values){
             names[idx] = r.getName();
             idx++;
         }
-        long[] ids = new long[values.length];
+        long[] ids = new long[values.size()];
         idx = 0;
         for (RecipeContainer r: values){
             ids[idx] = r.getRecipeid();

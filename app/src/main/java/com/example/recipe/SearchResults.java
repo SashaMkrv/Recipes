@@ -52,7 +52,7 @@ public class SearchResults extends AppCompatActivity{
         }
 
         //String[] resultList = {"Pumpkin Pie", "Cookies", "Sandwich", "Bread", "Carrot Potato Onion"};
-        RecipeArrayAdapter recipes = new RecipeArrayAdapter(this, resultList);
+        RecipeArrayAdapter recipes = new RecipeArrayAdapter(this, Arrays.asList(resultList));
         ListView results = (ListView)findViewById(R.id.resultList);
         results.setAdapter(recipes);
         results.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -77,13 +77,17 @@ public class SearchResults extends AppCompatActivity{
 
     public boolean onContextItemSelected(MenuItem menu){
         int idx = ((AdapterView.AdapterContextMenuInfo)menu.getMenuInfo()).position;
-        RecipeContainer recipe = ((RecipeArrayAdapter)list.getAdapter()).getItem(idx);
+        RecipeArrayAdapter adapter = (RecipeArrayAdapter)list.getAdapter();
+        RecipeContainer recipe = adapter.getItem(idx);
         long id = recipe.getRecipeid();
         RecipeDBHelper db = new RecipeDBHelper(this);
         Log.i("name", recipe.getName());
         if(menu.getTitle().toString().equals("Delete")){
             Log.i("delete", "item "+id);
             db.deleteRecipe(id);
+            //adapter.remove(adapter.getItem(idx));
+            // ^ will not work with arrays in adapters
+            //unsure if converting all stored values to arraylists would work though
         }
         else{
             Intent intent = new Intent(this,EditRecipeActivity.class);

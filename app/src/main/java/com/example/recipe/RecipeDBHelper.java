@@ -42,7 +42,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + INGREDIENTS_TABLE_NAME +
                 " (" + INGREDIENT_COLUMN_NAME + " varchar(20)," +
                 "recipeid integer," +
-                "PRIMARY KEY("+INGREDIENT_COLUMN_NAME+", recipeid),"+
+                "PRIMARY KEY("+INGREDIENT_COLUMN_NAME+", recipeid) ON CONFLICT IGNORE,"+
                 "FOREIGN KEY(recipeid) REFERENCES recipes(recipeid) ON DELETE CASCADE);");
 
         }
@@ -171,7 +171,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         long[] ids;
         String[] columns = {"recipeid"};
 
-        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "categoryName = '" + category+"'", null, null, null, null, null);
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "recipeName = '" + category+"'", null, null, null, null, null);
         results.moveToFirst();
 
         return getIds(results, columns[0]);
@@ -182,7 +182,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         long[] ids;
         String[] columns = {"recipeid"};
 
-        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "typeName = '" + type +"'", null, null, null, null, null);
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "recipeType = '" + type +"'", null, null, null, null, null);
         results.moveToFirst();
 
         return getIds(results, columns[0]);
