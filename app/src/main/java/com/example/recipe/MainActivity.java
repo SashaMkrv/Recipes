@@ -32,6 +32,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.TextView;
+
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 RecipeDBHelper db = new RecipeDBHelper(view.getContext());
                 db.fillExamples();
                 //intent.putExtra("ids", db.searchType("Breakfast"));
-                intent.putExtra("ids", db.searchIngredient("apples"));
+                intent.putExtra("ids", calculateRelevance());
                 startActivity(intent);
             }
         });
@@ -83,5 +85,11 @@ public class MainActivity extends AppCompatActivity {
     public void onImageClick(View view){
         Intent intent = new Intent(this, ChangeImageActivity.class);
         startActivity(intent);
+    }
+
+    public long[] calculateRelevance(){
+        RecipeDBHelper db = new RecipeDBHelper(this);
+        TextView ingredients = (TextView) findViewById(R.id.ingredientSearch);
+        return db.searchIngredient(ingredients.getText().toString());
     }
 }
