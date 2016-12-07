@@ -38,7 +38,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
                 "recipeName text," +
                         "recipeType varchar(20)," +
                         "recipeCategory varchar(20)," +
-                        "recipeInstructions text);");
+                        "recipeInstructions text, valid integer);");
         db.execSQL("create table " + INGREDIENTS_TABLE_NAME +
                 " (" + INGREDIENT_COLUMN_NAME + " varchar(20)," +
                 "recipeid integer," +
@@ -95,6 +95,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
     public long newRecipe(String name){
         ContentValues cv = new ContentValues();
         cv.put("recipeName", name);
+        cv.put("valid", 0);
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor results = db.query(RECIPE_TABLE_NAME, null, "recipeName = '" +name+ "'", null, null, null, null, null);
         if (results.getCount() != 0){
@@ -113,6 +114,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("recipeid", id);
+        cv.put("valid", 1);
         cv.put("recipeName", name);
         cv.put("recipeType", type);
         cv.put("recipeCategory", category);
@@ -186,6 +188,13 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         results.moveToFirst();
 
         return getIds(results, columns[0]);
+    }
+
+    public long[] getAll(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, new String[] {"recipeid"}, "valid ="+1, null, null, null, null, null);
+        results.moveToFirst();
+        return getIds(results, "recipeid");
     }
 
     public RecipeContainer getRecipe(long id){

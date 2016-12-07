@@ -44,9 +44,9 @@ public class RecipeArrayAdapter extends ArrayAdapter<RecipeContainer> {
 // Change the icon for Windows and iPhone
         String s = values[position];
         if (s == null || s.isEmpty() || s.equals("empty")) {
-            imageView.setImageResource(R.drawable.avatar_orange);
+            imageView.setImageResource(R.drawable.cake);
         } else {
-            imageView.setImageResource(R.drawable.avatar_orange);
+            imageView.setImageResource(R.drawable.cake);
         }
         return rowView;
     }

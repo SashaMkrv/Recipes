@@ -16,7 +16,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -35,6 +37,8 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    private int ADD_RECIPE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +79,33 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), EditRecipeActivity.class);
                 RecipeDBHelper db = new RecipeDBHelper(view.getContext());
-                String name = ((EditText)findViewById(R.id.recipeName)).getText().toString();
+                EditText rName = (EditText)findViewById(R.id.recipeName);
+                String name = (rName).getText().toString();
                 long id = db.newRecipe(name);
                 intent.putExtra("id", id);
-                startActivity(intent);
+                startActivityForResult(intent, ADD_RECIPE);
+
+                rName.setText("");
             }
         });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent){
+        if(requestCode == ADD_RECIPE){
+            //i.e. in the event that the recipe goes unsaved
+            if(resultCode == Activity.RESULT_CANCELED){
+                long id = intent.getLongExtra("id", -1);
+                if (id > -1){
+                    RecipeDBHelper db = new RecipeDBHelper(this);
+                    db.deleteRecipe(id);
+                    Log.i("id", ""+id);
+                }
+            }
+            Log.i("id", "made it somewhere");
+        }
+    }
+
     public void onImageClick(View view){
         Intent intent = new Intent(this, ChangeImageActivity.class);
         startActivity(intent);
@@ -90,6 +114,26 @@ public class MainActivity extends AppCompatActivity {
     public long[] calculateRelevance(){
         RecipeDBHelper db = new RecipeDBHelper(this);
         TextView ingredients = (TextView) findViewById(R.id.ingredientSearch);
+        if(ingredients.getText().toString().equals("")) {
+            return db.getAll();
+        }
         return db.searchIngredient(ingredients.getText().toString());
+        /**Scanner scan = new Scanner(ingredients.getText().toString());
+        ArrayList<long[]> ids = new ArrayList<long[]>();
+        ArrayList<String> terms = new ArrayList<String>();
+        String term;
+        HashMap<Long, Integer> vals = new HashMap<Long, Integer>();
+        ArrayList<String> dontTerm = new ArrayList<String>();
+        while(scan.hasNext()) {
+                switch(term = scan.next()) {
+                    case "AND":
+                    //case "OR":
+                    case "NOT": dontTerm.add(scan.next());
+
+                    default: terms.add(term);
+                        ids.add(db.searchIngredient(term));
+                }
+            }
+        }*/
     }
 }

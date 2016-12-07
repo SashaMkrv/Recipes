@@ -1,5 +1,6 @@
 package com.example.recipe;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,6 +61,8 @@ public class EditRecipeActivity extends AppCompatActivity {
         ((EditText)findViewById(R.id.typeName)).setText(typeStr);
         ((EditText)findViewById(R.id.categoryName)).setText(categoryStr);
 
+        setResult(Activity.RESULT_CANCELED, (new Intent()).putExtra("id", id));
+
     }
     public void onImageClick(View view){
         Intent intent = new Intent(this, ChangeImageActivity.class);
@@ -94,6 +97,9 @@ public class EditRecipeActivity extends AppCompatActivity {
 
         RecipeDBHelper db = new RecipeDBHelper(this);
         db.updateRecipe(recipe);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("id", recipe.getRecipeid());
+        setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 
