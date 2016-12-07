@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         RecipeDBHelper db = new RecipeDBHelper(this);
         TextView ingredients = (TextView) findViewById(R.id.ingredientSearch);
         if(ingredients.getText().toString().equals("")) {
-            return db.getAll();
+            ids = db.getAll();
         }
         else{
             ArrayList<Long> idGroups = new ArrayList<Long>();
@@ -145,10 +146,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     //case "OR":
                     case "NOT":
-                        if (scan.hasNext()) currentGroup.addAll(getSearchIDs(false, scan.next(), db));
+                        if (scan.hasNext()) currentGroup.addAll(getSearchIDs(true, scan.next(), db));
                         break;
                     default:
-                        currentGroup.addAll(getSearchIDs(true, term, db));
+                        currentGroup.addAll(getSearchIDs(false, term, db));
                         Log.i("more group", ""+currentGroup);
                 }
             }
@@ -187,11 +188,21 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < finalIds.length; i++){
                 finalIds[i] = allIdsL.get(i);
             }
-            return finalIds;
+            ids = finalIds;
         }
+
+        EditText cat = (EditText)findViewById(R.id.typeSearch);
+        if(!cat.getText().toString().equals("")){
+            RadioButton catCheck = (RadioButton)findViewById(R.id.categoryCheck);
+            if (catCheck.isSelected()){
+                ids =  db.shrinkByCategory(ids, cat.getText().toString());
+            }
+            else ids =  db.shrinkByType(ids, cat.getText().toString());
+        }
+        return ids;
     }
     private ArrayList<Long> getSearchIDs(boolean not, String term, RecipeDBHelper db){
-        long[] tmp = db.searchIngredient(term);
+        long[] tmp = db.searchIngredient(term, not);
         ArrayList<Long> returnValues = new ArrayList<Long>(tmp.length);
         for(long l: tmp){
             returnValues.add(l);
@@ -201,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class IdCompare implements Comparator<Long> {
         HashMap<Long, Integer> hm;
-        public IdCompare(HashMap h){
+        IdCompare(HashMap h){
             hm = h;
         }
         public int compare(Long l1, Long l2){

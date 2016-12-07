@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.IntegerRes;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -102,6 +103,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
             results.moveToFirst();
             return results.getLong(0);
         }
+        results.close();
         return this.getWritableDatabase().insert("recipes", null, cv);
     }
 
@@ -158,12 +160,49 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         return strings;
     }
 
-    public long[] searchIngredient(String ingredient){
+    public long[] searchIngredient(String ingredient, boolean notted){
         SQLiteDatabase db = this.getReadableDatabase();
         long[] ids;
         String[] columns = {"recipeid"};
+        String search = "ingredientName = '" + ingredient+"'";
+        if (notted){
+            //search = "ingredientName <> '"+ ingredient + "'";
+            search = "recipeid NOT IN (select recipeid FROM " + INGREDIENTS_TABLE_NAME + " where ingredientName = '"+ingredient+"')";
+        }
+        Cursor results = db.query(true, INGREDIENTS_TABLE_NAME, columns, search, null, null, null, null, null);
+        results.moveToFirst();
+        return getIds(results, columns[0]);
+    }
 
-        Cursor results = db.query(true, INGREDIENTS_TABLE_NAME, columns, "ingredientName = '" + ingredient+"'", null, null, null, null, null);
+    private String joinIds(long[] ids){
+        StringBuilder strB = new StringBuilder();
+        if (ids.length != 0) {
+            for (int i = 0; i < ids.length - 1; i++) {
+                strB.append(ids[i]);
+                strB.append(",");
+            }
+            strB.append(ids[ids.length - 1]);
+            return strB.toString();
+        }
+        return "";
+    }
+
+    public long[] shrinkByCategory(long[] ids, String category){
+        String idList = "(" + joinIds(ids) + ")";
+        String[] columns = {"recipeid"};
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "recipeid in " + idList+"" +
+                " AND recipeCategory = '"+category+"'", null, null, null, null, null);
+        results.moveToFirst();
+        return getIds(results, columns[0]);
+    }
+
+    public long[] shrinkByType(long[] ids, String type){
+        String idList = "(" + joinIds(ids) + ")";
+        String[] columns = {"recipeid"};
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "recipeid in " + idList+"" +
+                " AND recipeType = '"+type+"'", null, null, null, null, null);
         results.moveToFirst();
         return getIds(results, columns[0]);
     }
