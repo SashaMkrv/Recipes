@@ -140,21 +140,20 @@ public class MainActivity extends AppCompatActivity {
                 switch(term = scan.next()) {
                     case "AND":
                         idGroups.addAll(currentGroup);
+                        Log.i("cur group", ""+currentGroup);
                         currentGroup.clear();
-                        if (scan.hasNext()) term = scan.next();
-                    case "OR":
-                        if (scan.hasNext()) term = scan.next();
+                        break;
+                    //case "OR":
                     case "NOT":
                         if (scan.hasNext()) currentGroup.addAll(getSearchIDs(false, scan.next(), db));
                         break;
                     default:
                         currentGroup.addAll(getSearchIDs(true, term, db));
-                }
-
-                if(!scan.hasNext()){
-                    idGroups.addAll(currentGroup);
+                        Log.i("more group", ""+currentGroup);
                 }
             }
+            idGroups.addAll(currentGroup);
+
 
             //EditText catOrType = (EditText)findViewById(R.id.typeSearch);
 
@@ -162,14 +161,13 @@ public class MainActivity extends AppCompatActivity {
             //what an overly complicated way to get a search ranking
             HashMap<Long, Integer> rank = new HashMap<Long, Integer>();
             Long id;
-            Log.i("wwwhhhaaaat", ""+ idGroups.get(0).longValue());
             Iterator<Long> iter = idGroups.iterator();
             while(iter.hasNext()) {
                 id = iter.next().longValue();
-                Log.i("what even", "id " + idGroups);
                 if (rank.containsKey(id)) rank.put(id, rank.get(id) + 1);
                 else rank.put(id, 1);
             }
+            Log.i("what even", "id " + idGroups);
             Set<Long> allIds = new HashSet<>();
             allIds.addAll(idGroups);
             List<Long> allIdsL = new ArrayList<Long>(allIds);
@@ -207,7 +205,12 @@ public class MainActivity extends AppCompatActivity {
             hm = h;
         }
         public int compare(Long l1, Long l2){
-            return hm.get(l1) - hm.get(l2);
+            int tmp =  hm.get(l1) - hm.get(l2);
+            if (tmp == 0){
+                if (l1 < l2) return 1;
+                else return -1;
+            }
+            else return tmp;
         }
     }
 }
