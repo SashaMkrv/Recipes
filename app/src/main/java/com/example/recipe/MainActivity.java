@@ -107,10 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 if (id > -1){
                     RecipeDBHelper db = new RecipeDBHelper(this);
                     db.deleteRecipe(id);
-                    Log.i("id", ""+id);
                 }
             }
-            Log.i("id", "made it somewhere");
         }
     }
 
@@ -141,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 switch(term = scan.next()) {
                     case "AND":
                         idGroups.addAll(currentGroup);
-                        Log.i("cur group", ""+currentGroup);
                         currentGroup.clear();
                         break;
                     //case "OR":
@@ -150,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     default:
                         currentGroup.addAll(getSearchIDs(false, term, db));
-                        Log.i("more group", ""+currentGroup);
                 }
             }
             idGroups.addAll(currentGroup);
@@ -159,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             //EditText catOrType = (EditText)findViewById(R.id.typeSearch);
 
 
-            //what an overly complicated way to get a search ranking
+            //uses a hash map to calculate the number of times each recipe appears
             HashMap<Long, Integer> rank = new HashMap<Long, Integer>();
             Long id;
             Iterator<Long> iter = idGroups.iterator();
@@ -168,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
                 if (rank.containsKey(id)) rank.put(id, rank.get(id) + 1);
                 else rank.put(id, 1);
             }
-            Log.i("what even", "id " + idGroups);
             Set<Long> allIds = new HashSet<>();
             allIds.addAll(idGroups);
             List<Long> allIdsL = new ArrayList<Long>(allIds);
@@ -177,11 +172,11 @@ public class MainActivity extends AppCompatActivity {
             Long check;
             while (iter.hasNext()){
                 check = iter.next();
-                Log.i("so ok, how about", "" + check);
                 if (rank.get(check) < 1){
                     allIdsL.remove(check);
                 }
                 //remove all results with less than 1 match
+                //this actually probably not needed, nothing should be appearing without any matches
             }
             Collections.sort(allIdsL, Collections.reverseOrder(new IdCompare(rank)));
             long[] finalIds = new long[allIdsL.size()];
@@ -190,17 +185,16 @@ public class MainActivity extends AppCompatActivity {
             }
             ids = finalIds;
         }
-
+        //if there is a category or type, get rid of irrelevant recipes
         EditText cat = (EditText)findViewById(R.id.typeSearch);
         if(!cat.getText().toString().equals("")){
             RadioButton catCheck = (RadioButton)findViewById(R.id.categoryCheck);
-            if (catCheck.isSelected()){
-                ids =  db.shrinkByCategory(ids, cat.getText().toString());
-            }
-            else ids =  db.shrinkByType(ids, cat.getText().toString());
+            if (catCheck.isSelected()) ids =  db.shrinkByCategory(ids, cat.getText().toString());
+            else ids  =  db.shrinkByType(ids, cat.getText().toString());
         }
         return ids;
     }
+    //managing the array to ArrayList conversion and search query.
     private ArrayList<Long> getSearchIDs(boolean not, String term, RecipeDBHelper db){
         long[] tmp = db.searchIngredient(term, not);
         ArrayList<Long> returnValues = new ArrayList<Long>(tmp.length);
@@ -209,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return returnValues;
     }
-
+    //custome comparator for ordering recipes
     private class IdCompare implements Comparator<Long> {
         HashMap<Long, Integer> hm;
         IdCompare(HashMap h){

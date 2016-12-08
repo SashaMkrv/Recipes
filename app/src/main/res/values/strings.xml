@@ -33,5 +33,5 @@
     <string name="editPageName">Edit Recipe</string>
     <string name="changeImagePageName">Change Image</string>
     <string name="recipeInfoPageName">Recipe Information</string>
-    <string name="instructions">There would be instructions of some sort here, but there are not :(</string>
+    <string name="instructions">"In order to list all recipes, search with default values.\n\nIngredient search can use boolean logic to search and sort results. NOT affects the recipe directly to its right, and will instead search for all recipes without the item. OR groups ingredients and has the highest priority after NOT, AND following after.\n\n\t\tE.g. "a AND b OR c OR NOT d AND e"\n\t\tbecomes\n\t\t"a AND (b OR c OR (NOT d)) AND e".\n\nCategory and type search will remove values not in the given category or type.\n\nTry apples manipulating and sugar when searching."</string>
 </resources>

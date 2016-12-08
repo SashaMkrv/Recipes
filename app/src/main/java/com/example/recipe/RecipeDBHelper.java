@@ -192,7 +192,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         String[] columns = {"recipeid"};
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "recipeid in " + idList+"" +
-                " AND recipeCategory = '"+category+"'", null, null, null, null, null);
+                " AND trim(recipeCategory) like '"+category.trim()+"'", null, null, null, null, null);
         results.moveToFirst();
         return getIds(results, columns[0]);
     }
@@ -202,7 +202,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         String[] columns = {"recipeid"};
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor results = db.query(true, RECIPE_TABLE_NAME, columns, "recipeid in " + idList+"" +
-                " AND recipeType = '"+type+"'", null, null, null, null, null);
+                " AND trim(recipeType) like '"+type.trim()+"'", null, null, null, null, null);
         results.moveToFirst();
         return getIds(results, columns[0]);
     }
@@ -249,7 +249,7 @@ public class RecipeDBHelper extends SQLiteOpenHelper {
         }
 
         results.moveToFirst();
-        recipe = new RecipeContainer(id, results.getString(0), results.getString(1), results.getString(2));
+        recipe = new RecipeContainer(id, results.getString(0), results.getString(2), results.getString(1));
 
         try{jsoninstructions = new JSONArray(results.getString(3));}
         catch (Exception e) {jsoninstructions = new JSONArray();};
